@@ -632,6 +632,10 @@ html[data-fls-menu-open] .header__wrapper {
   display: flex;
   gap: 3.125rem;
 }
+.hero__content {
+  width: 100%;
+  flex: 0 0 100%;
+}
 .hero__heading {
   font-weight: 400;
 }
@@ -3202,6 +3206,10 @@ html[data-fls-menu-open] .header__wrapper {
 }@media (width >= 64.0625em){
   .hero {
     min-height: 100vh;
+  }
+  .hero__content {
+    width: initial;
+    flex: initial;
   }
   .challenges__title {
     max-width: 81.875rem;
