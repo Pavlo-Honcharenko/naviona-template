@@ -379,6 +379,36 @@ body {
   stroke: #a8d95f;
 }
 
+.fade-up-slow {
+  opacity: 0;
+  transform: translateY(-1.875rem);
+  transition: all 0.5s ease-in-out;
+}
+.fade-up-slow.--watcher-view {
+  opacity: 1;
+  transform: translate(0);
+}
+
+.fade-up-soft {
+  opacity: 0;
+  transform: translateY(-0.625rem);
+  transition: all 0.8s ease-in-out;
+}
+.fade-up-soft.--watcher-view {
+  opacity: 1;
+  transform: translate(0);
+}
+
+.fade-left {
+  opacity: 0;
+  transform: translate(-1.25rem);
+  transition: all 0.8s ease-in-out;
+}
+.fade-left.--watcher-view {
+  opacity: 1;
+  transform: translate(0);
+}
+
 .header {
   position: fixed;
   top: 0;
@@ -1205,6 +1235,18 @@ html[data-fls-menu-open] .header__wrapper {
   width: 100%;
   overflow: auto;
   padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: #074673 transparent;
+}
+.what-matters__tabs::-webkit-scrollbar {
+  height: 0.25rem;
+}
+.what-matters__tabs::-webkit-scrollbar-track {
+  background: transparent;
+}
+.what-matters__tabs::-webkit-scrollbar-thumb {
+  background-color: #074673;
+  border-radius: 6.25rem;
 }
 .what-matters__tab {
   flex: 0 1 fit-content;
@@ -1758,13 +1800,9 @@ html[data-fls-menu-open] .header__wrapper {
   cursor: pointer;
   transition: all 0.25s linear;
 }
-.resources__tab:hover {
-  background: #a8d95f;
-  color: #132132;
-}
-.resources__tab:active {
-  color: #a8d95f !important;
-  background: linear-gradient(90deg, #132132 0%, #3a6498 100%) !important;
+.resources__tab:active:not(.resources__tab--active) {
+  color: #a8d95f;
+  background: linear-gradient(90deg, #132132 0%, #3a6498 100%);
   transition: all 0.3s;
 }
 .resources__tab--active {
@@ -2301,6 +2339,18 @@ html[data-fls-menu-open] .header__wrapper {
   .resources__tabs {
     flex-wrap: nowrap;
     overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #074673 transparent;
+  }
+  .resources__tabs::-webkit-scrollbar {
+    height: 0.25rem;
+  }
+  .resources__tabs::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .resources__tabs::-webkit-scrollbar-thumb {
+    background-color: #074673;
+    border-radius: 6.25rem;
   }
   .resources__nav {
     display: none;
@@ -3754,5 +3804,10 @@ html[data-fls-menu-open] .header__wrapper {
   }
   .cta__subtitle {
     padding-bottom: 6.25rem;
+  }
+}@media (hover: hover) and (pointer: fine){
+  .resources__tab:hover:not(.resources__tab--active) {
+    background: #a8d95f;
+    color: #132132;
   }
 }
