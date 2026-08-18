@@ -1961,7 +1961,7 @@ html[data-fls-menu-open] .header__wrapper {
   color: #ccdbe8;
 }
 .cta__subtitle {
-  max-width: 42.5rem;
+  max-width: 42.5rem !important;
 }
 .cta__actions {
   position: relative;
@@ -2534,6 +2534,10 @@ html[data-fls-menu-open] .header__wrapper {
 }@media (width < 28.75em){
   .customer-success__panel {
     width: calc(100% - 1.875rem);
+  }
+}@media (width < 27.1875em){
+  .hero__actions .button {
+    min-width: 100%;
   }
 }@media (width < 26.5625em){
   .button {
