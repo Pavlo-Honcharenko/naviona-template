@@ -3426,9 +3426,7 @@ function initWhatMattersSlider() {
 	}
 	function updateTabsState(activeIndex) {
 		tabs.forEach((tab, index) => {
-			const position = (index - activeIndex + 1 + tabs.length) % tabs.length;
 			tab.classList.toggle("what-matters__tab--active", index === activeIndex);
-			tab.style.order = position;
 		});
 		if (tabsRoot) tabsRoot.scrollLeft = 0;
 	}
