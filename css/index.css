@@ -2508,6 +2508,11 @@ html[data-fls-menu-open] .header__wrapper {
     border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.3);
     padding-right: 0;
   }
+  .what-matters__tabs {
+    justify-content: flex-start;
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+  }
 }@media (width < 30em){
   .resources__cta-button {
     min-width: 100%;
@@ -2521,11 +2526,6 @@ html[data-fls-menu-open] .header__wrapper {
   .customer-success__logo--active {
     height: 4rem;
     min-width: 10.8125rem;
-  }
-  .what-matters__tabs {
-    justify-content: flex-start;
-    padding-left: 0.625rem;
-    padding-right: 0.625rem;
   }
   .what-matters__slide-text {
     padding-left: 0 !important;
