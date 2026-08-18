@@ -3416,14 +3416,6 @@ function initWhatMattersSlider() {
 	const tabs = tabsRoot ? Array.from(tabsRoot.querySelectorAll(".what-matters__tab")) : [];
 	const prevButtons = document.querySelectorAll("[data-fls-what-matters-prev]");
 	const nextButtons = document.querySelectorAll("[data-fls-what-matters-next]");
-	function updateArrowsState(activeSwiper) {
-		prevButtons.forEach((button) => {
-			button.classList.toggle("slider-arrow--disabled", activeSwiper.isBeginning);
-		});
-		nextButtons.forEach((button) => {
-			button.classList.toggle("slider-arrow--disabled", activeSwiper.isEnd);
-		});
-	}
 	function updateTabsState(activeIndex) {
 		tabs.forEach((tab, index) => {
 			tab.classList.toggle("what-matters__tab--active", index === activeIndex);
@@ -3438,15 +3430,10 @@ function initWhatMattersSlider() {
 		spaceBetween: 0,
 		speed: 600,
 		autoHeight: true,
+		loop: true,
 		on: {
-			init: (activeSwiper) => {
-				updateArrowsState(activeSwiper);
-				updateTabsState(activeSwiper.activeIndex);
-			},
-			slideChange: (activeSwiper) => {
-				updateArrowsState(activeSwiper);
-				updateTabsState(activeSwiper.activeIndex);
-			}
+			init: (activeSwiper) => updateTabsState(activeSwiper.realIndex),
+			slideChange: (activeSwiper) => updateTabsState(activeSwiper.realIndex)
 		}
 	});
 	prevButtons.forEach((button) => {
@@ -3456,7 +3443,7 @@ function initWhatMattersSlider() {
 		button.addEventListener("click", () => swiper.slideNext());
 	});
 	tabs.forEach((tab, index) => {
-		tab.addEventListener("click", () => swiper.slideTo(index));
+		tab.addEventListener("click", () => swiper.slideToLoop(index));
 	});
 }
 document.querySelector("[data-fls-what-matters-slider]") && window.addEventListener("load", initWhatMattersSlider);
@@ -3566,16 +3553,6 @@ document.querySelector("[data-fls-industries-we-serve]") && window.addEventListe
 function initCustomerSuccessSlider() {
 	const root = document.querySelector("[data-fls-customer-success-slider]");
 	if (!root) return;
-	const prevButtons = root.querySelectorAll("[data-fls-customer-success-prev]");
-	const nextButtons = root.querySelectorAll("[data-fls-customer-success-next]");
-	function updateArrowsState(activeSwiper) {
-		prevButtons.forEach((button) => {
-			button.classList.toggle("slider-arrow--disabled", activeSwiper.isBeginning);
-		});
-		nextButtons.forEach((button) => {
-			button.classList.toggle("slider-arrow--disabled", activeSwiper.isEnd);
-		});
-	}
 	function syncNav(activeSwiper) {
 		const sourceNav = activeSwiper.slides[activeSwiper.activeIndex]?.querySelector(".customer-success__nav");
 		if (!sourceNav) return;
@@ -3592,15 +3569,10 @@ function initCustomerSuccessSlider() {
 		spaceBetween: 0,
 		speed: 600,
 		autoHeight: true,
+		loop: true,
 		on: {
-			init: (activeSwiper) => {
-				updateArrowsState(activeSwiper);
-				syncNav(activeSwiper);
-			},
-			slideChange: (activeSwiper) => {
-				updateArrowsState(activeSwiper);
-				syncNav(activeSwiper);
-			}
+			init: (activeSwiper) => syncNav(activeSwiper),
+			slideChange: (activeSwiper) => syncNav(activeSwiper)
 		}
 	});
 	root.addEventListener("click", (event) => {
@@ -3617,8 +3589,8 @@ function initCustomerSuccessSlider() {
 		}
 		if (logoButton) {
 			const company = logoButton.dataset.company;
-			const targetIndex = Array.from(swiper.slides).findIndex((slide) => slide.dataset.company === company);
-			if (targetIndex !== -1) swiper.slideTo(targetIndex);
+			const targetIndex = Array.from(swiper.slides).filter((slide) => !slide.classList.contains("swiper-slide-duplicate")).findIndex((slide) => slide.dataset.company === company);
+			if (targetIndex !== -1) swiper.slideToLoop(targetIndex);
 		}
 	});
 }
