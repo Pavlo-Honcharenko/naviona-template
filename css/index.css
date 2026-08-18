@@ -1752,7 +1752,7 @@ html[data-fls-menu-open] .header__wrapper {
   text-transform: uppercase;
   white-space: nowrap;
   cursor: pointer;
-  transition: all 0.25 s linear;
+  transition: all 0.25s linear;
 }
 .resources__tab:hover {
   background: #a8d95f;
