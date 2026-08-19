@@ -3442,7 +3442,19 @@ function initWhatMattersSlider() {
 	nextButtons.forEach((button) => {
 		button.addEventListener("click", () => swiper.slideNext());
 	});
+	const TAP_MOVE_THRESHOLD = 10;
 	tabs.forEach((tab, index) => {
+		let pointerStartX = 0;
+		let pointerStartY = 0;
+		tab.addEventListener("pointerdown", (event) => {
+			pointerStartX = event.clientX;
+			pointerStartY = event.clientY;
+		});
+		tab.addEventListener("pointerup", (event) => {
+			const movedX = Math.abs(event.clientX - pointerStartX);
+			const movedY = Math.abs(event.clientY - pointerStartY);
+			if (movedX < TAP_MOVE_THRESHOLD && movedY < TAP_MOVE_THRESHOLD) swiper.slideToLoop(index);
+		});
 		tab.addEventListener("click", () => swiper.slideToLoop(index));
 	});
 }
