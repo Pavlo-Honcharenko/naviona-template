@@ -3409,6 +3409,21 @@ var Autoplay = ({ swiper, extendParams, on, emit, params }) => {
 };
 //#endregion
 //#region src/components/pages/index/what-matters-slider.js
+var TAP_MOVE_THRESHOLD$1 = 10;
+function attachTapHandler$1(element, handler) {
+	let pointerStartX = 0;
+	let pointerStartY = 0;
+	element.addEventListener("pointerdown", (event) => {
+		pointerStartX = event.clientX;
+		pointerStartY = event.clientY;
+	});
+	element.addEventListener("pointerup", (event) => {
+		const movedX = Math.abs(event.clientX - pointerStartX);
+		const movedY = Math.abs(event.clientY - pointerStartY);
+		if (movedX < TAP_MOVE_THRESHOLD$1 && movedY < TAP_MOVE_THRESHOLD$1) handler();
+	});
+	element.addEventListener("click", handler);
+}
 function initWhatMattersSlider() {
 	const root = document.querySelector("[data-fls-what-matters-slider]");
 	if (!root) return;
@@ -3442,47 +3457,37 @@ function initWhatMattersSlider() {
 	nextButtons.forEach((button) => {
 		button.addEventListener("click", () => swiper.slideNext());
 	});
-	const TAP_MOVE_THRESHOLD = 10;
 	tabs.forEach((tab, index) => {
-		let pointerStartX = 0;
-		let pointerStartY = 0;
-		tab.addEventListener("pointerdown", (event) => {
-			pointerStartX = event.clientX;
-			pointerStartY = event.clientY;
-		});
-		tab.addEventListener("pointerup", (event) => {
-			const movedX = Math.abs(event.clientX - pointerStartX);
-			const movedY = Math.abs(event.clientY - pointerStartY);
-			if (movedX < TAP_MOVE_THRESHOLD && movedY < TAP_MOVE_THRESHOLD) swiper.slideToLoop(index);
-		});
-		tab.addEventListener("click", () => swiper.slideToLoop(index));
+		attachTapHandler$1(tab, () => swiper.slideToLoop(index));
 	});
 }
 document.querySelector("[data-fls-what-matters-slider]") && window.addEventListener("load", initWhatMattersSlider);
 //#endregion
 //#region src/components/pages/index/resources-tabs.js
+var TAP_MOVE_THRESHOLD = 10;
+function attachTapHandler(element, handler) {
+	let pointerStartX = 0;
+	let pointerStartY = 0;
+	element.addEventListener("pointerdown", (event) => {
+		pointerStartX = event.clientX;
+		pointerStartY = event.clientY;
+	});
+	element.addEventListener("pointerup", (event) => {
+		const movedX = Math.abs(event.clientX - pointerStartX);
+		const movedY = Math.abs(event.clientY - pointerStartY);
+		if (movedX < TAP_MOVE_THRESHOLD && movedY < TAP_MOVE_THRESHOLD) handler();
+	});
+	element.addEventListener("click", handler);
+}
 function initResourcesTabs() {
 	const root = document.querySelector("[data-fls-resources-tabs]");
 	if (!root) return;
 	const tabs = Array.from(root.querySelectorAll(".resources__tab"));
-	const TAP_MOVE_THRESHOLD = 10;
-	function activateTab(tab) {
-		tabs.forEach((item) => item.classList.remove("resources__tab--active"));
-		tab.classList.add("resources__tab--active");
-	}
 	tabs.forEach((tab) => {
-		let pointerStartX = 0;
-		let pointerStartY = 0;
-		tab.addEventListener("pointerdown", (event) => {
-			pointerStartX = event.clientX;
-			pointerStartY = event.clientY;
+		attachTapHandler(tab, () => {
+			tabs.forEach((item) => item.classList.remove("resources__tab--active"));
+			tab.classList.add("resources__tab--active");
 		});
-		tab.addEventListener("pointerup", (event) => {
-			const movedX = Math.abs(event.clientX - pointerStartX);
-			const movedY = Math.abs(event.clientY - pointerStartY);
-			if (movedX < TAP_MOVE_THRESHOLD && movedY < TAP_MOVE_THRESHOLD) activateTab(tab);
-		});
-		tab.addEventListener("click", () => activateTab(tab));
 	});
 }
 document.querySelector("[data-fls-resources-tabs]") && window.addEventListener("load", initResourcesTabs);
@@ -3542,6 +3547,32 @@ function initResourcesSlider() {
 document.querySelector("[data-fls-resources-slider]") && window.addEventListener("load", initResourcesSlider);
 //#endregion
 //#region src/components/pages/index/industries-we-serve.js
+function retryOnInteraction$1(video) {
+	const events = [
+		"pointerdown",
+		"touchstart",
+		"keydown"
+	];
+	const retry = () => {
+		video.play().then(() => {
+			events.forEach((eventName) => document.removeEventListener(eventName, retry));
+		}).catch(() => {});
+	};
+	events.forEach((eventName) => document.addEventListener(eventName, retry, { passive: true }));
+}
+function playWhenReady(video) {
+	const attemptPlay = () => {
+		video.play().catch(() => {});
+		setTimeout(() => {
+			if (video.paused) retryOnInteraction$1(video);
+		}, 300);
+	};
+	if (video.readyState >= 2) {
+		attemptPlay();
+		return;
+	}
+	video.addEventListener("canplay", attemptPlay, { once: true });
+}
 function initIndustriesWeServeHoverVideo() {
 	const cards = document.querySelectorAll(".industries-we-serve__card");
 	if (!cards.length) return;
@@ -3550,7 +3581,7 @@ function initIndustriesWeServeHoverVideo() {
 			const video = card.querySelector(".industries-we-serve__video");
 			if (!video) return;
 			card.addEventListener("mouseenter", () => {
-				video.play().catch(() => {});
+				playWhenReady(video);
 			});
 			card.addEventListener("mouseleave", () => {
 				video.pause();
@@ -3563,7 +3594,7 @@ function initIndustriesWeServeHoverVideo() {
 		entries.forEach((entry) => {
 			const video = entry.target.querySelector(".industries-we-serve__video");
 			if (!video) return;
-			if (entry.isIntersecting) video.play().catch(() => {});
+			if (entry.isIntersecting) playWhenReady(video);
 			else {
 				video.pause();
 				video.currentTime = 0;
@@ -3574,13 +3605,41 @@ function initIndustriesWeServeHoverVideo() {
 }
 document.querySelector("[data-fls-industries-we-serve]") && window.addEventListener("load", initIndustriesWeServeHoverVideo);
 //#endregion
+//#region src/components/pages/index/hero.js
+function retryOnInteraction(video) {
+	const events = [
+		"pointerdown",
+		"touchstart",
+		"keydown"
+	];
+	const retry = () => {
+		video.play().then(() => {
+			events.forEach((eventName) => document.removeEventListener(eventName, retry));
+		}).catch(() => {});
+	};
+	events.forEach((eventName) => document.addEventListener(eventName, retry, { passive: true }));
+}
+function initHeroVideos() {
+	document.querySelectorAll(".hero__video, .hero__badge-video").forEach((video) => {
+		setTimeout(() => {
+			if (video.paused) retryOnInteraction(video);
+		}, 500);
+	});
+}
+document.querySelector("[data-fls-hero]") && window.addEventListener("load", initHeroVideos);
+//#endregion
 //#region src/components/pages/index/customer-success-slider.js
 function initCustomerSuccessSlider() {
 	const root = document.querySelector("[data-fls-customer-success-slider]");
 	if (!root) return;
+	let lastSyncedCompany = null;
 	function syncNav(activeSwiper) {
-		const sourceNav = activeSwiper.slides[activeSwiper.activeIndex]?.querySelector(".customer-success__nav");
+		const sourceSlide = activeSwiper.slides[activeSwiper.activeIndex];
+		const company = sourceSlide?.dataset.company;
+		if (!company || company === lastSyncedCompany) return;
+		const sourceNav = sourceSlide.querySelector(".customer-success__nav");
 		if (!sourceNav) return;
+		lastSyncedCompany = company;
 		const clone = sourceNav.cloneNode(true);
 		const existingClone = root.querySelector(":scope > .customer-success__nav");
 		if (existingClone) existingClone.replaceWith(clone);
@@ -3588,8 +3647,6 @@ function initCustomerSuccessSlider() {
 	}
 	const swiper = new Swiper(root, {
 		modules: [Navigation],
-		observer: true,
-		observeParents: true,
 		slidesPerView: 1,
 		spaceBetween: 0,
 		speed: 600,
