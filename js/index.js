@@ -3561,17 +3561,10 @@ function retryOnInteraction$1(video) {
 	events.forEach((eventName) => document.addEventListener(eventName, retry, { passive: true }));
 }
 function playWhenReady(video) {
-	const attemptPlay = () => {
-		video.play().catch(() => {});
-		setTimeout(() => {
-			if (video.paused) retryOnInteraction$1(video);
-		}, 300);
-	};
-	if (video.readyState >= 2) {
-		attemptPlay();
-		return;
-	}
-	video.addEventListener("canplay", attemptPlay, { once: true });
+	video.play().catch(() => {});
+	setTimeout(() => {
+		if (video.paused) retryOnInteraction$1(video);
+	}, 300);
 }
 function initIndustriesWeServeHoverVideo() {
 	const cards = document.querySelectorAll(".industries-we-serve__card");
