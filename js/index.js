@@ -3453,11 +3453,24 @@ function initResourcesTabs() {
 	const root = document.querySelector("[data-fls-resources-tabs]");
 	if (!root) return;
 	const tabs = Array.from(root.querySelectorAll(".resources__tab"));
+	const TAP_MOVE_THRESHOLD = 10;
+	function activateTab(tab) {
+		tabs.forEach((item) => item.classList.remove("resources__tab--active"));
+		tab.classList.add("resources__tab--active");
+	}
 	tabs.forEach((tab) => {
-		tab.addEventListener("click", () => {
-			tabs.forEach((item) => item.classList.remove("resources__tab--active"));
-			tab.classList.add("resources__tab--active");
+		let pointerStartX = 0;
+		let pointerStartY = 0;
+		tab.addEventListener("pointerdown", (event) => {
+			pointerStartX = event.clientX;
+			pointerStartY = event.clientY;
 		});
+		tab.addEventListener("pointerup", (event) => {
+			const movedX = Math.abs(event.clientX - pointerStartX);
+			const movedY = Math.abs(event.clientY - pointerStartY);
+			if (movedX < TAP_MOVE_THRESHOLD && movedY < TAP_MOVE_THRESHOLD) activateTab(tab);
+		});
+		tab.addEventListener("click", () => activateTab(tab));
 	});
 }
 document.querySelector("[data-fls-resources-tabs]") && window.addEventListener("load", initResourcesTabs);
