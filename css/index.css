@@ -969,6 +969,7 @@ html[data-fls-menu-open] .header__wrapper {
   border-radius: 1.25rem;
   overflow: hidden;
   position: relative;
+  min-width: 100%;
 }
 .customer-success__card {
   padding-top: 2.5rem;
